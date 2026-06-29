@@ -204,7 +204,7 @@ export async function doOAuth(provider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,                          // 'google' or 'github'
     options: {
-      redirectTo: window.location.origin + '/auth-callback.html',
+      redirectTo: 'https://ravda-boeing.github.io/SinkOSAuth/auth-callback.html',
     },
   });
   if (error) alert(error.message);
