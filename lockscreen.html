@@ -369,7 +369,7 @@
 
     const inputHash = await hashPassword(pw);
     if (inputHash === storedHash) {
-      window.location.href = '/desktop.html';
+      window.location.href = '/end.html';
     } else {
       err.textContent = 'Incorrect password. Try again.';
       document.getElementById('ls-pw').value = '';
