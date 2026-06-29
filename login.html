@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sink OS — Sign In</title>
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+<div id="auth-root">
+
+  <!-- ══════════════════════════════════════════
+       LOGIN SCREEN
+  ══════════════════════════════════════════ -->
+  <div class="screen active" id="screen-login">
+    <div class="os-logo">
+      <div class="os-logo-mark">system</div>
+      <div class="os-logo-name">Sink<span>OS</span></div>
+      <div class="os-logo-sub">v1.0.0 · auth module</div>
+    </div>
+
+    <div class="card">
+      <div class="tag-badge">SIGN IN</div>
+      <div class="card-title">Welcome back</div>
+      <div class="card-sub">Sign in to continue to Sink OS.</div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="user@example.com"
+               autocomplete="email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap">
+          <input type="password" id="login-password" placeholder="············"
+                 autocomplete="current-password"
+                 onkeydown="if(event.key==='Enter') window.Auth.doLogin()">
+          <button class="eye-btn" onclick="window.Auth.togglePw('login-password', this)"
+                  aria-label="Toggle password visibility">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="err-msg" id="login-err">Incorrect email or password.</div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-login"
+              data-label="SIGN IN"
+              onclick="window.Auth.doLogin()">SIGN IN</button>
+
+      <div class="divider"><span>or continue with</span></div>
+
+      <div class="oauth-row">
+        <button class="btn-oauth" onclick="window.Auth.doOAuth('google')">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M5.26 9.77A7.49 7.49 0 0 1 12 4.5c1.8 0 3.42.64 4.68 1.7l3.48-3.48A12 12 0 0 0 0 12c0 2 .49 3.9 1.36 5.58l3.9-3.02A7.49 7.49 0 0 1 4.5 12c0-.77.11-1.52.76-2.23z"/>
+            <path fill="#FBBC05" d="M12 19.5c-2.18 0-4.14-.9-5.58-2.36l-3.9 3.02A12 12 0 0 0 12 24c2.94 0 5.64-1.04 7.74-2.74l-3.64-2.82A7.44 7.44 0 0 1 12 19.5z"/>
+            <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.55-.2-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.37 3.6l3.64 2.82C21.93 18.95 23.5 15.84 23.5 12.27z"/>
+            <path fill="#34A853" d="M5.26 9.77A7.56 7.56 0 0 0 4.5 12c0 .78.13 1.53.76 2.14l-3.9 3.02A12.04 12.04 0 0 1 0 12c0-2 .49-3.9 1.36-5.58l3.9 3.35z"/>
+          </svg>
+          Google
+        </button>
+        <button class="btn-oauth" onclick="window.Auth.doOAuth('github')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--os-muted2)" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.11.82-.26.82-.58v-2c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12.005 12.005 0 0 0 24 12C24 5.37 18.63 0 12 0z"/>
+          </svg>
+          GitHub
+        </button>
+      </div>
+
+      <div class="switch-hint">
+        No account? <a onclick="window.Auth.go('screen-register')">Create one</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       REGISTER SCREEN
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-register">
+    <div class="os-logo">
+      <div class="os-logo-mark">system</div>
+      <div class="os-logo-name">Sink<span>OS</span></div>
+    </div>
+
+    <div class="card">
+      <div class="tag-badge">CREATE ACCOUNT</div>
+      <div class="card-title">New account</div>
+      <div class="card-sub">Sign up to get started with Sink OS.</div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="user@example.com"
+               autocomplete="email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap">
+          <input type="password" id="reg-password" placeholder="············"
+                 autocomplete="new-password"
+                 oninput="window.Auth.checkStrength(this.value)">
+          <button class="eye-btn" onclick="window.Auth.togglePw('reg-password', this)"
+                  aria-label="Toggle password visibility">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+        <div class="strength-bar"><div class="strength-fill" id="str-fill"></div></div>
+        <div class="strength-label" id="str-label"></div>
+        <div class="err-msg" id="reg-err"></div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-register"
+              data-label="CREATE ACCOUNT"
+              onclick="window.Auth.doRegister()">CREATE ACCOUNT</button>
+
+      <div class="divider"><span>or</span></div>
+
+      <div class="oauth-row">
+        <button class="btn-oauth" onclick="window.Auth.doOAuth('google')">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M5.26 9.77A7.49 7.49 0 0 1 12 4.5c1.8 0 3.42.64 4.68 1.7l3.48-3.48A12 12 0 0 0 0 12c0 2 .49 3.9 1.36 5.58l3.9-3.02A7.49 7.49 0 0 1 4.5 12c0-.77.11-1.52.76-2.23z"/>
+            <path fill="#FBBC05" d="M12 19.5c-2.18 0-4.14-.9-5.58-2.36l-3.9 3.02A12 12 0 0 0 12 24c2.94 0 5.64-1.04 7.74-2.74l-3.64-2.82A7.44 7.44 0 0 1 12 19.5z"/>
+            <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.55-.2-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.37 3.6l3.64 2.82C21.93 18.95 23.5 15.84 23.5 12.27z"/>
+            <path fill="#34A853" d="M5.26 9.77A7.56 7.56 0 0 0 4.5 12c0 .78.13 1.53.76 2.14l-3.9 3.02A12.04 12.04 0 0 1 0 12c0-2 .49-3.9 1.36-5.58l3.9 3.35z"/>
+          </svg>
+          Google
+        </button>
+        <button class="btn-oauth" onclick="window.Auth.doOAuth('github')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--os-muted2)" aria-hidden="true">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.39.6.11.82-.26.82-.58v-2c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58A12.005 12.005 0 0 0 24 12C24 5.37 18.63 0 12 0z"/>
+          </svg>
+          GitHub
+        </button>
+      </div>
+
+      <div class="switch-hint">
+        Already have an account? <a onclick="window.Auth.go('screen-login')">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       EMAIL VERIFY SCREEN
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-verify">
+    <div class="os-logo">
+      <div class="os-logo-mark">system</div>
+      <div class="os-logo-name">Sink<span>OS</span></div>
+    </div>
+
+    <div class="card">
+      <div class="verify-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </div>
+      <div class="tag-badge">CHECK YOUR EMAIL</div>
+      <div class="card-title">Confirm your address</div>
+      <div class="card-sub">
+        We sent a confirmation link to your email address.
+        Click the link to activate your account, then return here to sign in.
+      </div>
+      <div class="info-box">
+        Didn't receive it? Check your spam folder, or wait a minute and try again.
+      </div>
+      <button class="btn btn-ghost" onclick="window.Auth.go('screen-login')">
+        BACK TO SIGN IN
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       FIRST-TIME SETUP SCREEN
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-setup">
+    <div class="os-logo">
+      <div class="os-logo-mark">first time setup</div>
+      <div class="os-logo-name">Sink<span>OS</span></div>
+    </div>
+
+    <div class="card">
+      <div class="setup-steps">
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <div class="tag-badge">SETUP</div>
+      <div class="card-title">Set up your profile</div>
+      <div class="card-sub">
+        Choose a username and a local OS password.
+        Your OS password is asked every time you unlock Sink OS on this device —
+        it's separate from your account password.
+      </div>
+
+      <div class="field">
+        <label>Username</label>
+        <input type="text" id="setup-username" placeholder="sink_user"
+               autocomplete="username" maxlength="32">
+      </div>
+
+      <div class="field">
+        <label>OS Password</label>
+        <div class="input-wrap">
+          <input type="password" id="setup-ospw" placeholder="············"
+                 autocomplete="new-password">
+          <button class="eye-btn" onclick="window.Auth.togglePw('setup-ospw', this)"
+                  aria-label="Toggle password visibility">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Confirm OS Password</label>
+        <input type="password" id="setup-ospw2" placeholder="············"
+               autocomplete="new-password"
+               onkeydown="if(event.key==='Enter') window.Auth.doSetup()">
+        <div class="err-msg" id="setup-err"></div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-setup"
+              data-label="CONTINUE"
+              onclick="window.Auth.doSetup()">CONTINUE</button>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       BOOT SCREEN
+  ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-boot">
+    <div class="boot-screen">
+      <div class="os-logo" style="margin-bottom: 2rem">
+        <div class="os-logo-mark">initializing</div>
+        <div class="os-logo-name">Sink<span>OS</span></div>
+      </div>
+      <div class="boot-text" id="boot-text">LOADING SYSTEM...</div>
+      <div class="boot-bar"><div class="boot-fill" id="boot-fill"></div></div>
+      <div class="boot-status" id="boot-status">Mounting filesystem...</div>
+    </div>
+  </div>
+
+</div><!-- /#auth-root -->
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

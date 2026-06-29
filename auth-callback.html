@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sink OS — Authenticating…</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+    body {
+      margin: 0;
+      background: #07080F;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #00C6E0;
+      font-size: 12px;
+      letter-spacing: .1em;
+    }
+    p { opacity: .7; }
+  </style>
+</head>
+<body>
+  <p>AUTHENTICATING...</p>
+
+  <script type="module">
+    import { supabase } from './js/supabase.js';
+
+    // Supabase automatically picks up the OAuth tokens from the URL hash/query.
+    // We just need to wait for the session to be set, then check for a profile.
+    const { data: { session }, error } = await supabase.auth.getSession();
+
+    if (error || !session) {
+      // Something went wrong — send back to login
+      window.location.href = '/index.html';
+    } else {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profile) {
+        // Returning OAuth user — go straight to the lock screen
+        window.location.href = '/index.html#lock';
+      } else {
+        // First OAuth login — need to set up profile
+        window.location.href = '/index.html#setup';
+      }
+    }
+  </script>
+</body>
+</html>

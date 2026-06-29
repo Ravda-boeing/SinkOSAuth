@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sink OS — Welcome</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue-btn:  #0078D4;
+      --blue-hover:#106EBE;
+      --text:      #1A1A2E;
+      --text-muted:#666;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #c9d8f5 0%, #dce8ff 30%, #e8f0fe 55%, #d5e8fb 75%, #c2d6f7 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(120,180,255,0.25) 0%, transparent 70%);
+      top: -150px; left: -100px;
+      pointer-events: none;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(180,210,255,0.2) 0%, transparent 70%);
+      bottom: -100px; right: -80px;
+      pointer-events: none;
+    }
+
+    .stage {
+      width: 100%;
+      max-width: 860px;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 16px;
+      padding: 3rem 3.5rem 2rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 8px 32px rgba(0,100,200,0.08), 0 2px 8px rgba(0,60,150,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .os-watermark {
+      position: absolute;
+      top: 2rem;
+      right: 2.5rem;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: rgba(0,100,200,0.3);
+      text-transform: uppercase;
+    }
+
+    /* ── Screens wrap ── */
+    .screens-wrap {
+      position: relative;
+      height: 320px;
+      overflow: hidden;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      will-change: opacity, transform;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    /* ── Screen 1: Welcome ── */
+    .welcome-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .welcome-eyebrow {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: var(--blue-btn);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+    .welcome-title {
+      font-size: 52px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+    .welcome-title strong { font-weight: 600; }
+    .welcome-sub {
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--blue-btn);
+      letter-spacing: -0.01em;
+    }
+    .welcome-sub span { font-weight: 600; }
+
+    /* ── Screen 2: What's new ── */
+    .whats-new-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .whats-new-left h2 {
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .whats-new-left h2 strong { font-weight: 700; }
+    .whats-new-left p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      line-height: 1.6;
+    }
+    .features-list { list-style: none; }
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,100,200,0.08);
+    }
+    .feature-item:last-child { border-bottom: none; }
+    .feature-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--blue-btn);
+      margin-top: 5px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+    .feature-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1px;
+    }
+    .feature-text span {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Screen 3: Theme ── */
+    .theme-heading { margin-bottom: 1.25rem; }
+    .theme-heading h2 {
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .theme-heading h2 strong { font-weight: 700; }
+    .theme-heading p { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+    .theme-options { display: flex; gap: 1.25rem; }
+    .theme-card {
+      flex: 1;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      overflow: hidden;
+      background: rgba(255,255,255,0.5);
+    }
+    .theme-card:hover { transform: translateY(-2px); }
+    .theme-card.selected {
+      border-color: var(--blue-btn);
+      box-shadow: 0 0 0 4px rgba(0,120,212,0.12);
+    }
+    .theme-preview {
+      height: 110px;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      gap: 6px;
+    }
+    .theme-preview.light-prev { background: linear-gradient(135deg, #f0f4ff, #e8f0fe); }
+    .theme-preview.dark-prev  { background: linear-gradient(135deg, #0d1117, #161b27); }
+    .prev-bar { height: 8px; border-radius: 4px; width: 60%; }
+    .prev-bar.light { background: rgba(0,100,200,0.2); }
+    .prev-bar.dark  { background: rgba(100,160,255,0.25); }
+    .prev-window { flex: 1; border-radius: 6px; margin-top: 4px; }
+    .prev-window.light { background: rgba(255,255,255,0.7); }
+    .prev-window.dark  { background: rgba(30,40,60,0.8); }
+    .theme-label {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .theme-label span { font-size: 13px; font-weight: 500; color: var(--text); }
+    .theme-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(0,100,200,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .theme-card.selected .theme-check { background: var(--blue-btn); border-color: var(--blue-btn); }
+    .theme-check svg { display: none; }
+    .theme-card.selected .theme-check svg { display: block; }
+
+    /* ── Screen 4: Welcome aboard ── */
+    .aboard-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .aboard-icon {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #d4e8ff, #b8d4ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .aboard-icon svg { width: 32px; height: 32px; }
+    .aboard-title {
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .aboard-title strong { font-weight: 700; }
+    .aboard-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 340px;
+      line-height: 1.6;
+    }
+
+    /* ── Bottom bar (outside screens, always visible) ── */
+    .bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(0,100,200,0.08);
+      margin-top: 1.5rem;
+    }
+    .progress-dots { display: flex; gap: 6px; align-items: center; margin-right: auto; }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(0,100,200,0.2);
+      transition: all 0.3s ease;
+    }
+    .dot.active { width: 20px; border-radius: 3px; background: var(--blue-btn); }
+    .dot.done   { background: rgba(0,120,212,0.45); }
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+    .btn-primary { background: var(--blue-btn); color: #fff; }
+    .btn-primary:hover { background: var(--blue-hover); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid rgba(0,100,200,0.2);
+    }
+    .btn-ghost:hover { background: rgba(0,100,200,0.05); color: var(--text); }
+    .btn-ghost.hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="card">
+    <div class="os-watermark">Sink OS</div>
+
+    <div class="screens-wrap">
+
+      <!-- Screen 1: Welcome -->
+      <div class="screen active" id="s1">
+        <div class="welcome-body">
+          <div class="welcome-eyebrow">Setup complete</div>
+          <div class="welcome-title"><strong>Welcome</strong></div>
+          <div class="welcome-sub">to Sink OS <span>V2</span></div>
+        </div>
+      </div>
+
+      <!-- Screen 2: What's new -->
+      <div class="screen" id="s2">
+        <div class="whats-new-layout">
+          <div class="whats-new-left">
+            <h2>What's<br><strong>new?</strong></h2>
+            <p>Here's everything new in Sink OS V2.</p>
+          </div>
+          <ul class="features-list">
+            <li class="feature-item">
+              <div class="feature-dot"></div>
+              <div class="feature-text">
+                <strong>Account system</strong>
+                <span>Sign in with email, Google, or GitHub. Your data stays with you.</span>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-dot"></div>
+              <div class="feature-text">
+                <strong>Lock screen</strong>
+                <span>Protect your session with a personal OS password.</span>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-dot"></div>
+              <div class="feature-text">
+                <strong>Light &amp; dark themes</strong>
+                <span>Choose how Sink OS looks — switch any time in settings.</span>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-dot"></div>
+              <div class="feature-text">
+                <strong>Persistent sessions</strong>
+                <span>Stay signed in across visits. No re-login needed.</span>
+              </div>
+            </li>
+            <li class="feature-item">
+              <div class="feature-dot"></div>
+              <div class="feature-text">
+                <strong>Redesigned desktop</strong>
+                <span>A cleaner, faster interface built for V2.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Screen 3: Theme -->
+      <div class="screen" id="s3">
+        <div class="theme-heading">
+          <h2>Pick a <strong>theme</strong></h2>
+          <p>You can always change this later in settings.</p>
+        </div>
+        <div class="theme-options">
+          <div class="theme-card selected" id="theme-light" onclick="selectTheme('light')">
+            <div class="theme-preview light-prev">
+              <div class="prev-bar light"></div>
+              <div class="prev-window light"></div>
+            </div>
+            <div class="theme-label">
+              <span>Light</span>
+              <div class="theme-check">
+                <svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="1,5 4.5,8.5 11,1"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="theme-card" id="theme-dark" onclick="selectTheme('dark')">
+            <div class="theme-preview dark-prev">
+              <div class="prev-bar dark"></div>
+              <div class="prev-window dark"></div>
+            </div>
+            <div class="theme-label">
+              <span>Dark</span>
+              <div class="theme-check">
+                <svg viewBox="0 0 12 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="1,5 4.5,8.5 11,1"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen 4: Welcome aboard -->
+      <div class="screen" id="s4">
+        <div class="aboard-body">
+          <div class="aboard-icon">
+            <svg viewBox="0 0 32 32" fill="none" stroke="#0078D4" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="16" cy="16" r="13"/>
+              <polyline points="10,16 14,20 22,12"/>
+            </svg>
+          </div>
+          <div class="aboard-title"><strong>Welcome aboard!</strong></div>
+          <div class="aboard-sub">You're all set. Sink OS is ready to go.</div>
+        </div>
+      </div>
+
+    </div><!-- /.screens-wrap -->
+
+    <!-- Bottom bar: always visible, updated by JS -->
+    <div class="bottom-bar">
+      <div class="progress-dots">
+        <div class="dot active" id="dot-0"></div>
+        <div class="dot"        id="dot-1"></div>
+        <div class="dot"        id="dot-2"></div>
+        <div class="dot"        id="dot-3"></div>
+      </div>
+      <button class="btn btn-ghost hidden" id="btn-back"    onclick="go(current - 1)">← Back</button>
+      <button class="btn btn-primary"      id="btn-next"    onclick="go(current + 1)">Next →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var current = 0;
+  var total   = 4;
+  var chosenTheme  = 'light';
+  var transitioning = false;
+
+  var screens  = ['s1','s2','s3','s4'];
+  var btnBack  = document.getElementById('btn-back');
+  var btnNext  = document.getElementById('btn-next');
+
+  function updateUI() {
+    // Dots
+    for (var i = 0; i < total; i++) {
+      var d = document.getElementById('dot-' + i);
+      d.className = 'dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    }
+    // Back button
+    btnBack.classList.toggle('hidden', current === 0);
+    // Next / finish button
+    if (current === total - 1) {
+      btnNext.textContent = 'Get started →';
+      btnNext.onclick = finish;
+    } else {
+      btnNext.textContent = 'Next →';
+      btnNext.onclick = function() { go(current + 1); };
+    }
+  }
+
+  function go(idx) {
+    if (transitioning || idx === current || idx < 0 || idx >= total) return;
+    transitioning = true;
+
+    var goingForward = idx > current;
+    var outEl = document.getElementById(screens[current]);
+    var inEl  = document.getElementById(screens[idx]);
+
+    // Set incoming screen's start position (off to the side, invisible)
+    inEl.style.transition  = 'none';
+    inEl.style.transform   = goingForward ? 'translateX(50px)' : 'translateX(-50px)';
+    inEl.style.opacity     = '0';
+    inEl.style.pointerEvents = 'none';
+    inEl.classList.add('active');
+
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        // Re-enable transitions and animate both screens
+        outEl.style.transition = 'opacity 0.32s ease, transform 0.32s ease';
+        inEl.style.transition  = 'opacity 0.32s ease, transform 0.32s ease';
+
+        outEl.style.transform  = goingForward ? 'translateX(-50px)' : 'translateX(50px)';
+        outEl.style.opacity    = '0';
+
+        inEl.style.transform   = 'translateX(0)';
+        inEl.style.opacity     = '1';
+        inEl.style.pointerEvents = 'auto';
+
+        current = idx;
+        updateUI();
+
+        setTimeout(function() {
+          outEl.classList.remove('active');
+          outEl.style.cssText   = '';
+          inEl.style.transition = '';
+          inEl.style.transform  = '';
+          inEl.style.opacity    = '';
+          transitioning = false;
+        }, 340);
+      });
+    });
+  }
+
+  function selectTheme(theme) {
+    chosenTheme = theme;
+    document.getElementById('theme-light').classList.toggle('selected', theme === 'light');
+    document.getElementById('theme-dark').classList.toggle('selected', theme === 'dark');
+  }
+
+  function finish() {
+    localStorage.setItem('sinkos_theme', chosenTheme);
+    window.location.href = '/lockscreen.html';
+  }
+
+  // Init
+  updateUI();
+</script>
+
+</body>
+</html>
