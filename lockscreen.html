@@ -97,7 +97,6 @@
         0 8px 20px rgba(80,120,200,0.12);
     }
 
-    /* Specular top sheen */
     .glass-card::before {
       content: '';
       position: absolute;
@@ -143,7 +142,6 @@
       color: #1c2d54;
       outline: none;
       letter-spacing: 0.05em;
-
       background: linear-gradient(145deg, rgba(255,255,255,0.55), rgba(255,255,255,0.35));
       border: 1px solid rgba(255,255,255,0.8);
       box-shadow: 0 1px 0 rgba(255,255,255,0.7) inset, 0 4px 12px rgba(100,140,220,0.1);
@@ -184,7 +182,6 @@
       letter-spacing: 0.01em;
       color: #fff;
       margin-bottom: 18px;
-
       background: linear-gradient(145deg, rgba(70,120,220,0.85), rgba(50,100,200,0.75));
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
@@ -201,6 +198,7 @@
       transform: translateY(0);
       box-shadow: 0 1px 0 rgba(180,210,255,0.4) inset, 0 4px 12px rgba(60,100,200,0.25);
     }
+    .unlock-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
     /* ── Divider ── */
     .card-divider {
@@ -237,18 +235,15 @@
 </head>
 <body>
 
-  <!-- Background orbs -->
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
 
-  <!-- Time & Date -->
   <div class="time-block">
     <div class="time-display" id="ls-time">12:00 AM</div>
     <div class="date-display" id="ls-date">Monday, 1 January 2025</div>
   </div>
 
-  <!-- Glass lock card -->
   <div class="glass-card" id="glass-card">
     <div class="avatar">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -286,10 +281,9 @@
 <script type="module">
   import { supabase } from './supabase.js';
 
-  // ── Clock ──────────────────────────────────────────────
   const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const pad = n => String(n).padStart(2,'0');
+  const pad = n => String(n).padStart(2, '0');
 
   function tick() {
     const now  = new Date();
@@ -304,10 +298,9 @@
   tick();
   setInterval(tick, 10000);
 
-  // ── Load username ──────────────────────────────────────
   async function loadUsername() {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { window.location.href = '/index.html'; return; }
+    if (!session) { window.location.href = '/SinkOSAuth/index.html'; return; }
     const { data } = await supabase
       .from('profiles')
       .select('username')
@@ -317,7 +310,6 @@
   }
   loadUsername();
 
-  // ── Eye toggle ─────────────────────────────────────────
   const EYE_OPEN = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
   const EYE_SHUT = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
 
@@ -328,7 +320,6 @@
     else                         { inp.type = 'password'; btn.innerHTML = EYE_OPEN; }
   };
 
-  // ── Shake ──────────────────────────────────────────────
   function shake() {
     const card = document.getElementById('glass-card');
     card.classList.remove('shake');
@@ -336,13 +327,11 @@
     card.classList.add('shake');
   }
 
-  // ── Hash ──────────────────────────────────────────────
   async function hashPassword(pw) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  // ── Unlock ─────────────────────────────────────────────
   window.tryUnlock = async function() {
     const pw  = document.getElementById('ls-pw').value;
     const err = document.getElementById('ls-err');
@@ -357,7 +346,7 @@
     let storedHash = sessionStorage.getItem('os_pw_hash');
     if (!storedHash) {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { window.location.href = '/index.html'; return; }
+      if (!session) { window.location.href = '/SinkOSAuth/index.html'; return; }
       const { data } = await supabase
         .from('profiles')
         .select('os_password_hash')
@@ -369,7 +358,7 @@
 
     const inputHash = await hashPassword(pw);
     if (inputHash === storedHash) {
-      window.location.href = '/end.html';
+      window.location.href = '/SinkOSAuth/end.html';
     } else {
       err.textContent = 'Incorrect password. Try again.';
       document.getElementById('ls-pw').value = '';
@@ -379,11 +368,10 @@
     }
   };
 
-  // ── Switch account ─────────────────────────────────────
   window.switchAccount = async function() {
     sessionStorage.removeItem('os_pw_hash');
     await supabase.auth.signOut();
-    window.location.href = '/index.html';
+    window.location.href = '/SinkOSAuth/index.html';
   };
 </script>
 
