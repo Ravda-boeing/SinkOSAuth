@@ -106,7 +106,7 @@ export function runBoot(username, isNewUser = false) {
         if (isNewUser) {
           window.location.href = '/onboarding.html';
         } else {
-          window.location.href = '/lockscreen.html';
+          window.location.href = '/SinkOSAuth/lockscreen.html';
         }
       }, 600);
     }
@@ -293,5 +293,5 @@ export async function initAuth() {
   if (!profile) { go('screen-setup'); return; }
 
   // Already have a session → go straight to lock screen
-  window.location.href = '/lockscreen.html';
+  window.location.href = '/SinkOSAuth/lockscreen.html';
 }
