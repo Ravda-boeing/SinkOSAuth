@@ -26,13 +26,10 @@
   <script type="module">
     import { supabase } from './supabase.js';
 
-    // Supabase automatically picks up the OAuth tokens from the URL hash/query.
-    // We just need to wait for the session to be set, then check for a profile.
     const { data: { session }, error } = await supabase.auth.getSession();
 
     if (error || !session) {
-      // Something went wrong — send back to login
-      window.location.href = '/index.html';
+      window.location.href = '/SinkOSAuth/index.html';
     } else {
       const { data: profile } = await supabase
         .from('profiles')
@@ -41,11 +38,9 @@
         .single();
 
       if (profile) {
-        // Returning OAuth user — go straight to the lock screen
-        window.location.href = '/index.html#lock';
+        window.location.href = '/SinkOSAuth/lockscreen.html';
       } else {
-        // First OAuth login — need to set up profile
-        window.location.href = '/index.html#setup';
+        window.location.href = '/SinkOSAuth/index.html#setup';
       }
     }
   </script>
