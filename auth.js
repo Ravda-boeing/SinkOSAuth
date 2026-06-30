@@ -76,7 +76,7 @@ const EYE_CLOSED = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
 // ------------------------------------------------------------------
 // Boot sequence animation
 // isNewUser = true  → redirect to onboarding.html after boot
-// isNewUser = false → show lock screen after boot
+// isNewUser = false → redirect to lockscreen.html after boot
 // ------------------------------------------------------------------
 export function runBoot(username, isNewUser = false) {
   go('screen-boot');
@@ -104,20 +104,13 @@ export function runBoot(username, isNewUser = false) {
       title.textContent = 'SYSTEM READY';
       setTimeout(() => {
         if (isNewUser) {
-          window.location.href = '/onboarding.html';
+          window.location.href = '/SinkOSAuth/onboarding.html';
         } else {
           window.location.href = '/SinkOSAuth/lockscreen.html';
         }
       }, 600);
     }
   }, 80);
-}
-
-function showLock(username) {
-  document.getElementById('lock-username').textContent = username || 'user';
-  document.getElementById('lock-pw').value = '';
-  hideErr('lock-err');
-  go('screen-lock');
 }
 
 // ------------------------------------------------------------------
@@ -168,7 +161,7 @@ export async function doLogin() {
   if (!profile) {
     go('screen-setup');          // first time — collect username + OS password
   } else {
-    runBoot(profile.username);   // returning user — lock screen after boot
+    runBoot(profile.username);   // returning user — lockscreen after boot
   }
 }
 
@@ -241,49 +234,16 @@ export async function doSetup() {
 }
 
 // ------------------------------------------------------------------
-// LOCK: Verify OS password
+// AUTH: Sign out
 // ------------------------------------------------------------------
-export async function doUnlock() {
-  const pw = document.getElementById('lock-pw').value;
-  hideErr('lock-err');
-
-  // Try session cache first; fall back to DB lookup.
-  let storedHash = sessionStorage.getItem('os_pw_hash');
-  if (!storedHash) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { doSignOut(); return; }
-    const profile = await getProfile(user.id);
-    storedHash    = profile?.os_password_hash ?? null;
-    if (storedHash) sessionStorage.setItem('os_pw_hash', storedHash);
-  }
-
-  const inputHash = await hashPassword(pw);
-  if (inputHash === storedHash) {
-    go('screen-home');
-    const username = document.getElementById('lock-username').textContent;
-    document.getElementById('home-username').textContent = username;
-  } else {
-    showErr('lock-err', 'Incorrect OS password.');
-    document.getElementById('lock-pw').value = '';
-  }
-}
-
-export function doLock() {
-  document.getElementById('lock-pw').value = '';
-  hideErr('lock-err');
-  go('screen-lock');
-}
-
 export async function doSignOut() {
   sessionStorage.removeItem('os_pw_hash');
   await supabase.auth.signOut();
-  document.getElementById('login-email').value    = '';
-  document.getElementById('login-password').value = '';
-  go('screen-login');
+  window.location.href = '/SinkOSAuth/index.html';
 }
 
 // ------------------------------------------------------------------
-// Session restore on page load
+// Session restore on page load (index.html only)
 // ------------------------------------------------------------------
 export async function initAuth() {
   const { data: { session } } = await supabase.auth.getSession();
@@ -292,6 +252,6 @@ export async function initAuth() {
   const profile = await getProfile(session.user.id);
   if (!profile) { go('screen-setup'); return; }
 
-  // Already have a session → go straight to lock screen
+  // Already have a session and a profile → go straight to the lock screen
   window.location.href = '/SinkOSAuth/lockscreen.html';
 }
