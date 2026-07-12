@@ -358,7 +358,13 @@
 
     const inputHash = await hashPassword(pw);
     if (inputHash === storedHash) {
-      window.location.href = '/SinkOSAuth/end.html';
+      const returnTo = sessionStorage.getItem('sinkos_return_to');
+      if (returnTo) {
+        sessionStorage.removeItem('sinkos_return_to');
+        window.location.href = returnTo;
+      } else {
+        window.location.href = '/SinkOSAuth/end.html';
+      }
     } else {
       err.textContent = 'Incorrect password. Try again.';
       document.getElementById('ls-pw').value = '';
