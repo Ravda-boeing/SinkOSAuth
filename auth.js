@@ -167,7 +167,12 @@ export async function doLogin() {
 
 // ------------------------------------------------------------------
 // AUTH: Email register
+// Sends a custom-branded verification email via our own Edge Function
+// (send-verification) + Resend, instead of Supabase's default email.
 // ------------------------------------------------------------------
+const SINKOS_FUNCTIONS_BASE = 'https://okknkixdbjsnqrwlfgzn.supabase.co/functions/v1';
+const SINKOS_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_0Axc0hmKuwVwVWD7tyIwKA_mZr7QJst';
+
 export async function doRegister() {
   const email = document.getElementById('reg-email').value.trim();
   const pw    = document.getElementById('reg-password').value;
@@ -179,14 +184,31 @@ export async function doRegister() {
   }
 
   setLoading('btn-register', true);
-  const { error } = await supabase.auth.signUp({ email, password: pw });
+
+  let res, result;
+  try {
+    res = await fetch(`${SINKOS_FUNCTIONS_BASE}/send-verification`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apiKey': SINKOS_SUPABASE_PUBLISHABLE_KEY,
+      },
+      body: JSON.stringify({ email, password: pw }),
+    });
+    result = await res.json();
+  } catch (err) {
+    setLoading('btn-register', false);
+    showErr('reg-err', 'Network error — please try again.');
+    return;
+  }
+
   setLoading('btn-register', false);
 
-  if (error) { showErr('reg-err', error.message); return; }
+  if (!res.ok) {
+    showErr('reg-err', result.error || 'Something went wrong.');
+    return;
+  }
 
-  // Supabase sends a confirmation email by default.
-  // If you disable email confirmation in the Supabase dashboard,
-  // the user is signed in immediately and you can call go('screen-setup').
   go('screen-verify');
 }
 
