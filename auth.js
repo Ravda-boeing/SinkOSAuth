@@ -119,7 +119,7 @@ export function runBoot(username, isNewUser = false) {
 async function getProfile(userId) {
   const { data } = await supabase
     .from('profiles')
-    .select('username, os_password_hash')
+    .select('username')
     .eq('id', userId)
     .single();
   return data;
@@ -246,10 +246,6 @@ export async function doSetup() {
   setLoading('btn-setup', false);
 
   if (error) { showErr('setup-err', error.message); return; }
-
-  // Cache hash in sessionStorage so the lock screen can verify
-  // without a round-trip on every unlock during the same session.
-  sessionStorage.setItem('os_pw_hash', hash);
 
   // isNewUser = true → boot will redirect to onboarding.html
   runBoot(username, true);
