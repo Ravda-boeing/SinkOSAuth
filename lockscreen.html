@@ -353,7 +353,9 @@
 
     if (result.ok) {
       // Same value files/core.js already sets/checks, so other modules recognise this unlock.
+      console.log("✓ Password correct, setting localStorage...");
       localStorage.setItem('sinkos_unlocked', session.user.id);
+      console.log("✓ localStorage set. Checking value:", localStorage.getItem('sinkos_unlocked'));
       const returnTo = localStorage.getItem('sinkos_return_to');
       if (returnTo) {
         localStorage.removeItem('sinkos_return_to');
