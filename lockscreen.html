@@ -353,10 +353,10 @@
 
     if (result.ok) {
       // Same value files/core.js already sets/checks, so other modules recognise this unlock.
-      sessionStorage.setItem('sinkos_unlocked', session.user.id);
-      const returnTo = sessionStorage.getItem('sinkos_return_to');
+      localStorage.setItem('sinkos_unlocked', session.user.id);
+      const returnTo = localStorage.getItem('sinkos_return_to');
       if (returnTo) {
-        sessionStorage.removeItem('sinkos_return_to');
+        localStorage.removeItem('sinkos_return_to');
         window.location.href = returnTo;
       } else {
         window.location.href = 'https://ravda-boeing.github.io/SinkOSV2PB1/desktopv2.html';
@@ -395,8 +395,8 @@
   };
 
   window.switchAccount = async function() {
-    sessionStorage.removeItem('os_pw_hash');
-    sessionStorage.removeItem('sinkos_unlocked');
+    localStorage.removeItem('os_pw_hash');
+    localStorage.removeItem('sinkos_unlocked');
     await supabase.auth.signOut();
     window.location.href = '/SinkOSAuth/index.html';
   };
