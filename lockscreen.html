@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="./sinkos-theme.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sink OS — Locked</title>
@@ -233,6 +234,17 @@
     }
     .shake { animation: shake 0.45s ease; }
   </style>
+<style id="sink-theme-map">
+/* SinkOS shared theme (see sinkos-theme.js): wallpaper, dark themes and accent */
+html[data-sink-theme]:not([data-sink-wallpaper]) body{background:linear-gradient(160deg,var(--sink-bg1),var(--sink-bg2) 55%,var(--sink-bg3))}
+html[data-sink-wallpaper] body{background:var(--sink-bgimage) center/cover no-repeat}
+html[data-sink-wallpaper] .orb{display:none}
+html[data-sink-wallpaper] .time-display,html[data-sink-theme="midnight"] .time-display,html[data-sink-theme="classic"] .time-display{color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.45)}
+html[data-sink-wallpaper] .date-display,html[data-sink-theme="midnight"] .date-display,html[data-sink-theme="classic"] .date-display{color:rgba(255,255,255,.85);text-shadow:0 1px 10px rgba(0,0,0,.45)}
+html[data-sink-wallpaper] .glass-card,html[data-sink-theme="midnight"] .glass-card,html[data-sink-theme="classic"] .glass-card{background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(228,238,255,.78))}
+html[data-sink-accent] .unlock-btn{background:var(--sink-accent)}
+html[data-sink-accent] .unlock-btn:hover{filter:brightness(1.08)}
+</style>
 </head>
 <body>
 
